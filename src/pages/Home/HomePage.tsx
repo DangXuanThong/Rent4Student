@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { containerStyles, contentWrapperStyles } from './styles/HomePageStyles';
 import AppGlobalStyles from './styles/GlobalStyles';
 import BrandHeader from './components/BrandHeader';
@@ -9,6 +10,7 @@ import DecorativeElements from './components/DecorativeElements';
 
 const HomePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const navigate = useNavigate();
 
   const stats: Stat[] = [
     { number: '10K+', label: 'Properties' },
@@ -17,8 +19,9 @@ const HomePage: React.FC = () => {
   ];
 
   const handleSearch = () => {
-    console.log('Searching for:', searchQuery);
-    // Add your search logic here
+    const trimmed = searchQuery.trim();
+    // Navigate to search results page with query parameter
+    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
   };
 
   const handleSearchChange = (value: string) => {
