@@ -34,25 +34,32 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange }) =
 
   const handleMinPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    const numValue = value === '' ? undefined : Number(value);
+    // Clear filter if value is 0, empty, or NaN (0 is not a valid price filter)
     onFiltersChange({
       ...filters,
-      minPrice: value === '' ? undefined : Number(value),
+      minPrice: (numValue === undefined || numValue === 0 || isNaN(numValue)) ? undefined : numValue,
     });
   };
 
   const handleMaxPriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    const numValue = value === '' ? undefined : Number(value);
+    // Clear filter if value is 0, empty, or NaN (0 is not a valid price filter)
     onFiltersChange({
       ...filters,
-      maxPrice: value === '' ? undefined : Number(value),
+      maxPrice: (numValue === undefined || numValue === 0 || isNaN(numValue)) ? undefined : numValue,
     });
   };
 
   const handleMinRatingChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    // For rating, allow 0 as a valid value (to filter unrated items)
+    // Only clear if empty or NaN
+    const numValue = value === '' ? undefined : Number(value);
     onFiltersChange({
       ...filters,
-      minRating: value === '' ? undefined : Number(value),
+      minRating: (numValue === undefined || isNaN(numValue)) ? undefined : numValue,
     });
   };
 
@@ -115,7 +122,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange }) =
             type="number"
             value={filters.minPrice || ''}
             onChange={handleMinPriceChange}
-            inputProps={{ min: 0 }}
+            inputProps={{ min: 0, step: 1000 }}
           />
           <TextField
             fullWidth
@@ -124,7 +131,7 @@ const RoomFilters: React.FC<RoomFiltersProps> = ({ filters, onFiltersChange }) =
             type="number"
             value={filters.maxPrice || ''}
             onChange={handleMaxPriceChange}
-            inputProps={{ min: 0 }}
+            inputProps={{ min: 0, step: 1000 }}
           />
         </Stack>
 
