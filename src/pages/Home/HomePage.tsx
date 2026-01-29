@@ -1,0 +1,50 @@
+import React, { useState } from 'react';
+import { Box, Container } from '@mui/material';
+import { containerStyles, contentWrapperStyles } from './styles/HomePageStyles';
+import AppGlobalStyles from './styles/GlobalStyles';
+import BrandHeader from './components/BrandHeader';
+import SearchBar from './components/SearchBar';
+import StatsSection, { type Stat } from './components/StatsSection';
+import DecorativeElements from './components/DecorativeElements';
+
+const HomePage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const stats: Stat[] = [
+    { number: '10K+', label: 'Properties' },
+    { number: '50+', label: 'Cities' },
+    { number: '25K+', label: 'Happy Students' },
+  ];
+
+  const handleSearch = () => {
+    console.log('Searching for:', searchQuery);
+    // Add your search logic here
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+  };
+
+  return (
+    <>
+      <AppGlobalStyles />
+      <Box sx={containerStyles}>
+        <DecorativeElements />
+        
+        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
+          <Box sx={contentWrapperStyles}>
+            <BrandHeader />
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              onSearch={handleSearch}
+            />
+            <StatsSection stats={stats} />
+          </Box>
+        </Container>
+      </Box>
+    </>
+  );
+};
+
+export default HomePage;
