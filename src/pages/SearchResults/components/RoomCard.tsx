@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { Room } from './types';
+import type { Room } from '../types';
 
 interface RoomCardProps {
   room: Room;

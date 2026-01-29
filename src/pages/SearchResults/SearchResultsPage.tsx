@@ -1,15 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { Room } from './types';
-import SearchResultsHeader from './SearchResultsHeader';
-import RoomCard from './RoomCard';
+import type { Room } from './types';
+import SearchResultsHeader from './components/SearchResultsHeader';
+import RoomCard from './components/RoomCard';
+import {
+  resultsContainerStyles,
+  resultsInnerCardStyles,
+} from './styles/SearchResultsStyles';
 
 function useQuery() {
   const { search } = useLocation();
-  return useMemo(() => new URLSearchParams(search), [search]);
+  return new URLSearchParams(search);
 }
 
 const SearchResultsPage: React.FC = () => {
@@ -59,18 +63,6 @@ const SearchResultsPage: React.FC = () => {
     fetchRooms();
   }, []);
 
-  const filteredRooms = useMemo(() => {
-    if (!searchQuery) return rooms;
-    const q = searchQuery.toLowerCase();
-    return rooms.filter((room) => {
-      return (
-        room.name.toLowerCase().includes(q) ||
-        room.address.toLowerCase().includes(q) ||
-        room.description.toLowerCase().includes(q)
-      );
-    });
-  }, [rooms, searchQuery]);
-
   const handleCardClick = (roomId: string) => {
     // Placeholder for future detail page
     console.log('Room clicked:', roomId);
@@ -80,10 +72,19 @@ const SearchResultsPage: React.FC = () => {
     navigate('/');
   };
 
+  const handleSearch = (query: string) => {
+    const trimmed = query.trim();
+    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
+  };
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f7', py: 4 }}>
-      <Container maxWidth="md">
-        <SearchResultsHeader searchQuery={searchQuery} onBackHome={handleBackHome} />
+    <Box sx={resultsContainerStyles}>
+      <Container maxWidth="md" sx={resultsInnerCardStyles}>
+        <SearchResultsHeader
+          searchQuery={searchQuery}
+          onBackHome={handleBackHome}
+          onSearch={handleSearch}
+        />
 
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
@@ -97,15 +98,15 @@ const SearchResultsPage: React.FC = () => {
           </Typography>
         )}
 
-        {!loading && !error && filteredRooms.length === 0 && (
+        {!loading && !error && rooms.length === 0 && (
           <Typography align="center" mt={4}>
-            Không tìm thấy phòng trọ phù hợp với từ khóa của bạn.
+            Không có phòng trọ nào được tìm thấy.
           </Typography>
         )}
 
-        {!loading && !error && filteredRooms.length > 0 && (
+        {!loading && !error && rooms.length > 0 && (
           <Stack spacing={2}>
-            {filteredRooms.map((room) => (
+            {rooms.map((room) => (
               <RoomCard key={room.id} room={room} onClick={handleCardClick} />
             ))}
           </Stack>

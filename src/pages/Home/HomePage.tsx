@@ -20,8 +20,13 @@ const HomePage: React.FC = () => {
 
   const handleSearch = () => {
     const trimmed = searchQuery.trim();
-    // Navigate to search results page with query parameter
-    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
+    // Navigate to search results page with URL-encoded query parameter
+    if (trimmed) {
+      const encodedQuery = encodeURIComponent(trimmed);
+      navigate(`/search?q=${encodedQuery}`);
+    } else {
+      navigate('/search');
+    }
   };
 
   const handleSearchChange = (value: string) => {
@@ -33,7 +38,7 @@ const HomePage: React.FC = () => {
       <AppGlobalStyles />
       <Box sx={containerStyles}>
         <DecorativeElements />
-        
+
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={contentWrapperStyles}>
             <BrandHeader />
