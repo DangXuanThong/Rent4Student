@@ -9,6 +9,8 @@ export const resultsContainerStyles: SxProps<Theme> = {
   justifyContent: 'center',
   py: { xs: 4, md: 6 },
   px: 2,
+  overflowX: 'hidden',
+  boxSizing: 'border-box',
 };
 
 export const resultsInnerCardStyles: SxProps<Theme> = {

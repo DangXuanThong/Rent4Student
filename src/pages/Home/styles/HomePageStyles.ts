@@ -6,11 +6,13 @@ export const containerStyles: SxProps<Theme> = {
   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
   position: 'relative',
   overflow: 'hidden',
+  overflowX: 'hidden',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   margin: 0,
   padding: 0,
+  boxSizing: 'border-box',
   '&::before': {
     content: '""',
     position: 'absolute',
