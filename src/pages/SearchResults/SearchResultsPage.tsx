@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
@@ -74,7 +74,12 @@ const SearchResultsPage: React.FC = () => {
 
   const handleSearch = (query: string) => {
     const trimmed = query.trim();
-    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
+    if (trimmed) {
+      const search = createSearchParams({ q: trimmed }).toString();
+      navigate({ pathname: '/search', search: `?${search}` });
+    } else {
+      navigate('/search');
+    }
   };
 
   return (

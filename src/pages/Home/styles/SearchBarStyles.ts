@@ -4,17 +4,21 @@ export const searchPaperStyles: SxProps<Theme> = {
   mt: 5,
   borderRadius: '60px',
   overflow: 'hidden',
-  background: 'rgba(255,255,255,0.98)',
+  background: '#ffffff',
   backdropFilter: 'blur(20px)',
-  border: '2px solid rgba(255,255,255,0.3)',
-  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+  border: '3px solid rgba(102, 126, 234, 0.4)',
+  boxShadow: 'none',
   animation: 'slideUp 0.8s ease-out',
   animationDelay: '0.2s',
   animationFillMode: 'both',
   transition: 'all 0.3s ease',
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: '0 25px 70px rgba(0,0,0,0.35)',
+    boxShadow: 'none',
+    border: '3px solid rgba(102, 126, 234, 0.6)',
+  },
+  '&:focus-within': {
+    border: '3px solid rgba(102, 126, 234, 0.8)',
   },
 };
 
