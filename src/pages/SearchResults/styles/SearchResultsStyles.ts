@@ -13,6 +13,8 @@ export const resultsContainerStyles: SxProps<Theme> = {
 
 export const resultsInnerCardStyles: SxProps<Theme> = {
   bgcolor: 'rgba(255,255,255,0.96)',
+  // Ensure readable text on light "card" even if global theme is dark
+  color: '#0f172a',
   borderRadius: 4,
   boxShadow: '0 24px 80px rgba(15, 23, 42, 0.35)',
   px: { xs: 2.5, md: 4 },

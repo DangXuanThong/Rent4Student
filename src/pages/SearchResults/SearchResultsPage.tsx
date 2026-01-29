@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase';
 import type { Room } from './types';
 import SearchResultsHeader from './components/SearchResultsHeader';
 import RoomCard from './components/RoomCard';
+import RoomFilters from './components/RoomFilters';
+import { fetchRooms, type RoomFilterOptions } from './services/roomService';
 import {
   resultsContainerStyles,
   resultsInnerCardStyles,
@@ -24,44 +24,34 @@ const SearchResultsPage: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<RoomFilterOptions>({
+    sortBy: 'price',
+    sortDirection: 'desc',
+  });
+
+  const loadRooms = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const filterOptions: RoomFilterOptions = {
+        ...filters,
+        searchQuery: searchQuery || undefined,
+      };
+
+      const fetchedRooms = await fetchRooms(filterOptions);
+      setRooms(fetchedRooms);
+    } catch (err) {
+      console.error(err);
+      setError('Không thể tải danh sách phòng trọ. Vui lòng thử lại sau.');
+    } finally {
+      setLoading(false);
+    }
+  }, [filters, searchQuery]);
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const roomsColRef = collection(db, 'rooms');
-        const snapshot = await getDocs(roomsColRef);
-
-        const docs: Room[] = snapshot.docs.map((doc) => {
-          const data = doc.data() as Partial<Room>;
-          return {
-            id: doc.id,
-            name: data.name ?? '',
-            description: data.description ?? '',
-            price: data.price ?? 0,
-            emptySlots: data.emptySlots ?? 0,
-            longitude: data.longitude ?? 0,
-            latitude: data.latitude ?? 0,
-            totalRatings: data.totalRatings ?? 0,
-            ratingCount: data.ratingCount ?? 0,
-            telephone: data.telephone ?? '',
-            address: data.address ?? '',
-          };
-        });
-
-        setRooms(docs);
-      } catch (err) {
-        console.error(err);
-        setError('Không thể tải danh sách phòng trọ. Vui lòng thử lại sau.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRooms();
-  }, []);
+    loadRooms();
+  }, [loadRooms]);
 
   const handleCardClick = (roomId: string) => {
     // Placeholder for future detail page
@@ -82,6 +72,10 @@ const SearchResultsPage: React.FC = () => {
     }
   };
 
+  const handleFiltersChange = (newFilters: RoomFilterOptions) => {
+    setFilters(newFilters);
+  };
+
   return (
     <Box sx={resultsContainerStyles}>
       <Container maxWidth="md" sx={resultsInnerCardStyles}>
@@ -90,6 +84,8 @@ const SearchResultsPage: React.FC = () => {
           onBackHome={handleBackHome}
           onSearch={handleSearch}
         />
+
+        <RoomFilters filters={filters} onFiltersChange={handleFiltersChange} />
 
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>

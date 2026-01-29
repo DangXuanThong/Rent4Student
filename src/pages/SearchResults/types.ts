@@ -10,5 +10,11 @@ export interface Room {
   ratingCount: number;
   telephone: string;
   address: string;
+  comments: Comment[];
 }
 
+export interface Comment {
+  id: string;
+  user: string;
+  text: string;
+}
