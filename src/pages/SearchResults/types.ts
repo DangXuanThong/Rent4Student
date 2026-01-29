@@ -14,7 +14,6 @@ export interface Room {
 }
 
 export interface Comment {
-  id: string;
-  user: string;
+  name: string;
   text: string;
 }

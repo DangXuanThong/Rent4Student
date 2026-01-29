@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
-import { createSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { containerStyles, contentWrapperStyles } from './styles/HomePageStyles';
 import AppGlobalStyles from './styles/GlobalStyles';
 import BrandHeader from './components/BrandHeader';
@@ -20,10 +20,9 @@ const HomePage: React.FC = () => {
 
   const handleSearch = () => {
     const trimmed = searchQuery.trim();
-    // Navigate to search results page with URL-encoded query parameter
+    // Navigate to search results page with query parameter
     if (trimmed) {
-      const search = createSearchParams({ q: trimmed }).toString();
-      navigate({ pathname: '/search', search: `?${search}` });
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`);
     } else {
       navigate('/search');
     }

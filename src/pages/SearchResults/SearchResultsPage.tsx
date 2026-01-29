@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
 import type { Room } from './types';
 import SearchResultsHeader from './components/SearchResultsHeader';
@@ -12,28 +12,43 @@ import {
   resultsInnerCardStyles,
 } from './styles/SearchResultsStyles';
 
-function useQuery() {
-  const { search } = useLocation();
-  return new URLSearchParams(search);
-}
-
 const SearchResultsPage: React.FC = () => {
-  const queryParams = useQuery();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const searchQuery = (queryParams.get('q') || '').trim();
+  
+  // Get search query from URL
+  const searchQuery = (searchParams.get('q') || '').trim();
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState<RoomFilterOptions>({
-    sortBy: 'price',
-    sortDirection: 'desc',
-  });
+
+  // Parse filters from URL parameters
+  const getFiltersFromURL = useCallback((): RoomFilterOptions => {
+    const sortBy = searchParams.get('sortBy') as 'price' | 'rating' || 'price';
+    const sortDirection = searchParams.get('sortDirection') as 'asc' | 'desc' || 'desc';
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const minRating = searchParams.get('minRating');
+
+    return {
+      sortBy,
+      sortDirection,
+      minPrice: minPrice ? Number(minPrice) : undefined,
+      maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      minRating: minRating ? Number(minRating) : undefined,
+    };
+  }, [searchParams]);
+
+  const [filters, setFilters] = useState<RoomFilterOptions>(getFiltersFromURL());
 
   // Separate filters: dropdowns apply immediately, text inputs are debounced
-  const [immediateFilters, setImmediateFilters] = useState<Pick<RoomFilterOptions, 'sortBy' | 'sortDirection'>>({
-    sortBy: 'price',
-    sortDirection: 'desc',
+  const [immediateFilters, setImmediateFilters] = useState<Pick<RoomFilterOptions, 'sortBy' | 'sortDirection'>>(() => {
+    const urlFilters = getFiltersFromURL();
+    return {
+      sortBy: urlFilters.sortBy || 'price',
+      sortDirection: urlFilters.sortDirection || 'desc',
+    };
   });
   
   // Debounce text input filters (price, rating) to avoid excessive queries while typing
@@ -61,6 +76,36 @@ const SearchResultsPage: React.FC = () => {
   useEffect(() => {
     roomsRef.current = rooms;
   }, [rooms]);
+
+  // Sync filters to URL whenever they change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    
+    // Keep search query
+    if (searchQuery) {
+      params.set('q', searchQuery);
+    }
+    
+    // Add filter parameters
+    if (filters.sortBy) params.set('sortBy', filters.sortBy);
+    if (filters.sortDirection) params.set('sortDirection', filters.sortDirection);
+    if (filters.minPrice !== undefined) params.set('minPrice', filters.minPrice.toString());
+    if (filters.maxPrice !== undefined) params.set('maxPrice', filters.maxPrice.toString());
+    if (filters.minRating !== undefined) params.set('minRating', filters.minRating.toString());
+    
+    // Update URL without triggering navigation
+    setSearchParams(params, { replace: true });
+  }, [filters, searchQuery, setSearchParams]);
+
+  // Sync filters from URL when URL changes (e.g., browser back/forward)
+  useEffect(() => {
+    const urlFilters = getFiltersFromURL();
+    setFilters(urlFilters);
+    setImmediateFilters({
+      sortBy: urlFilters.sortBy || 'price',
+      sortDirection: urlFilters.sortDirection || 'desc',
+    });
+  }, [searchParams, getFiltersFromURL]);
 
   // Load rooms when filters or search query change
   useEffect(() => {
@@ -108,8 +153,7 @@ const SearchResultsPage: React.FC = () => {
   }, [effectiveFilters, searchQuery]);
 
   const handleCardClick = (roomId: string) => {
-    // Placeholder for future detail page
-    console.log('Room clicked:', roomId);
+    navigate(`/rooms/${roomId}`);
   };
 
   const handleBackHome = () => {
@@ -118,12 +162,15 @@ const SearchResultsPage: React.FC = () => {
 
   const handleSearch = (query: string) => {
     const trimmed = query.trim();
+    const params = new URLSearchParams(searchParams);
+    
     if (trimmed) {
-      const search = createSearchParams({ q: trimmed }).toString();
-      navigate({ pathname: '/search', search: `?${search}` });
+      params.set('q', trimmed);
     } else {
-      navigate('/search');
+      params.delete('q');
     }
+    
+    setSearchParams(params);
   };
 
   const handleFiltersChange = (newFilters: RoomFilterOptions) => {
@@ -180,4 +227,3 @@ const SearchResultsPage: React.FC = () => {
 };
 
 export default SearchResultsPage;
-
