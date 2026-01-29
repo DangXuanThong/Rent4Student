@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { containerStyles, contentWrapperStyles } from './styles/HomePageStyles';
 import AppGlobalStyles from './styles/GlobalStyles';
 import BrandHeader from './components/BrandHeader';

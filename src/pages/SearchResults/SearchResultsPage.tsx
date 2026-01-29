@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
 import type { Room } from './types';
 import SearchResultsHeader from './components/SearchResultsHeader';
