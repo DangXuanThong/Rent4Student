@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import type { Room } from '../../SearchResults/types';
+import { getRatingDisplay } from '../../../utils/ratingUtils';
 
 interface RoomInfoProps {
   room: Room;
@@ -8,12 +9,6 @@ interface RoomInfoProps {
 }
 
 const RoomInfo: React.FC<RoomInfoProps> = ({ room, onOpenMaps }) => {
-  // Calculate average rating
-  const calculateAverageRating = (): number => {
-    if (room.ratingCount === 0) return 0;
-    return room.totalRatings / room.ratingCount;
-  };
-
   return (
     <>
       <Typography variant="h5" fontWeight={700} gutterBottom>
@@ -42,7 +37,7 @@ const RoomInfo: React.FC<RoomInfoProps> = ({ room, onOpenMaps }) => {
           Toạ độ: {room.latitude}, {room.longitude}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Đánh giá: {calculateAverageRating().toFixed(1)} ⭐ ({room.ratingCount} lượt)
+          Đánh giá: {getRatingDisplay(room)}
         </Typography>
       </Stack>
 

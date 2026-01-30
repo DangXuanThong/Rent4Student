@@ -13,20 +13,31 @@ export const containerStyles: SxProps<Theme> = {
 };
 
 export const backButtonStyles: SxProps<Theme> = {
-  mb: 2,
+  mb: 3,
+  color: 'white',
+  fontWeight: 600,
+  fontSize: '1rem',
+  '&:hover': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
 };
 
 export const cardStyles: SxProps<Theme> = {
   borderRadius: 4,
   boxShadow: '0 24px 80px rgba(15, 23, 42, 0.35)',
-};
-
-export const loadingBoxStyles: SxProps<Theme> = {
-  display: 'flex',
-  justifyContent: 'center',
-  mt: 4,
+  animation: 'fadeIn 0.3s ease-in',
+  '@keyframes fadeIn': {
+    from: {
+      opacity: 0,
+      transform: 'translateY(20px)',
+    },
+    to: {
+      opacity: 1,
+      transform: 'translateY(0)',
+    },
+  },
 };
 
 export const errorTextStyles: SxProps<Theme> = {
-  mt: 4,
+  py: 4,
 };
