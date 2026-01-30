@@ -1,25 +1,24 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowBack } from '@mui/icons-material';
 import {
   Box,
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Container,
-  Typography,
   Skeleton,
   Stack,
+  Typography,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
-import { useRoom } from './hooks/useRoom';
-import RoomInfo from './components/RoomInfo';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import CommentsSection from './components/CommentsSection';
+import RoomInfo from './components/RoomInfo';
+import { useRoom } from './hooks/useRoom';
 import { getGoogleMapsUrl } from './services/roomDetailsService';
 import {
-  containerStyles,
   backButtonStyles,
   cardStyles,
+  containerStyles,
   errorTextStyles,
 } from './styles/RoomDetailsStyles';
 
@@ -59,20 +58,20 @@ const RoomDetailsPage: React.FC = () => {
               <Skeleton variant="text" width="60%" height={40} />
               <Skeleton variant="text" width="80%" height={25} sx={{ mt: 1 }} />
               <Skeleton variant="rectangular" height={100} sx={{ mt: 2, borderRadius: 1 }} />
-              
+
               <Stack direction="row" spacing={2} sx={{ mt: 3 }}>
                 <Skeleton variant="text" width={200} height={30} />
                 <Skeleton variant="text" width={100} height={30} />
               </Stack>
-              
+
               <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
                 <Skeleton variant="text" width={150} height={20} />
                 <Skeleton variant="text" width={150} height={20} />
               </Stack>
-              
+
               <Skeleton variant="text" width={200} height={20} sx={{ mt: 2 }} />
               <Skeleton variant="rectangular" width={200} height={36} sx={{ mt: 3, borderRadius: 1 }} />
-              
+
               {/* Comments skeleton */}
               <Box sx={{ mt: 4 }}>
                 <Skeleton variant="text" width={150} height={30} />
